@@ -1,0 +1,9 @@
+POST http://localhost:3000/expenses/5534367d-131b-4401-8d5e-3b54ca93318b
+Content-Type: application/json
+
+{
+  "title": "Movie",
+  "category": "entertainment",
+  "date": "20-06-2022",
+  "amount": "40"
+}

@@ -26,10 +26,6 @@ app.use( express.json() );
 app.use( express.urlencoded({ extended: true }) );
 app.use( express.static('public') );
 
-app.get('/', (req, res) => {
-  res.render('index.ejs')
-})
-
 app.get('/dashboard', (req, res) => {
   res.render('dashboard.ejs')
 })
@@ -46,6 +42,7 @@ app.post('/user', async (req, res) => {
   const newUser = {
     uid: uuidv4(),
     username,
+    expenses: [],
   }
 
   try {
@@ -56,6 +53,39 @@ app.post('/user', async (req, res) => {
       uid: user.uid,
       username: user.username
     })
+  } catch(err) {
+    console.error(`Error: ${err}`)
+  }
+})
+
+// Get all user's expenses
+app.get('/', async (req, res) => {
+  try {
+    const allUser = await db.collection('user').find().toArray();
+    // Remove sensitive information
+    const newAllUser = allUser.map(user => ({ username: user.username, expenses: user.expenses }))
+    
+    res.render('index.ejs', { allUser: newAllUser })
+  } catch(err) {
+    console.error(`Error: ${err}`)
+  }
+})
+
+app.post('/expenses/:uid', async (req, res) => {
+  const newExpense = {
+    title: req.body.title,
+    date: req.body.date,
+    category: req.body.category,
+    amount: req.body.amount
+  }
+
+  try {
+    const result = await db.collection('user').updateOne(
+      { uid: req.params.uid },
+      { $push: { expenses: newExpense }}
+    );
+
+    res.render('dashboard.ejs');
   } catch(err) {
     console.error(`Error: ${err}`)
   }
