@@ -1,5 +1,8 @@
 :root {
   --cl-green: #daedbd;
+  --cl-dark-green: #009879;
+  --cl-grey: #d2d0d0;
+  --gap: 1em;
 }
 
 *,
@@ -33,6 +36,12 @@ button {
   border: 1px solid #999;
 }
 
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
 /*
 * === Utilities ===
 */
@@ -41,12 +50,40 @@ button {
   display: flex;
 }
 
+.grid-container {
+  display: grid;
+  gap: var(--grid-gap, 2em);
+}
+
 .flow {
   gap: var(--flow-gap, 1em);
 }
 
 .hide {
   display: none;
+}
+
+.container {
+  background: #fff;
+  padding: var(--gap, 1em);
+}
+
+.container--rounded-corner {
+  border-radius: 10px;
+}
+
+/*
+* === General ===
+*/
+main {
+  padding-inline: 1em;
+  padding-bottom: 3.5em;
+}
+
+@media only screen and (min-width: 600px) {
+  main {
+    padding-inline: clamp(2em, 2vw + 1em, 10em);
+  }
 }
 
 /*
@@ -58,7 +95,7 @@ button {
   align-items: center;
   padding: 1em 2em;
   background-color: var(--cl-green);
-  margin-bottom: 5em;
+  margin-bottom: 2em;
 }
 
 /*
@@ -73,4 +110,86 @@ form {
   border: 1px solid #999;
   border-radius: 2px;
   padding: 2em;
+}
+
+/*
+* === Expense Table ===
+*/
+
+.expenses-container {
+  max-height: 318px;
+  overflow-y: scroll;
+}
+
+#desktop-table {
+  display: none;
+}
+
+table {
+  border-collapse: collapse;
+  min-width: 100%;
+  margin-bottom: 10px;
+  text-transform: capitalize;
+}
+
+.container header,
+table caption {
+  font-size: 1.15rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.75em;
+}
+
+th {
+  background-color: var(--cl-dark-green);
+  color: #fff;
+}
+
+tbody tr {
+  background: #fff;
+  border-bottom: 1px solid #bbb;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.5em 0.75em;
+  border: 1px solid var(--cl-grey);
+}
+
+@media only screen and (min-width: 1240px) {
+  #mobile-table {
+    display: none;
+  }
+
+  #desktop-table {
+    display: block;
+  }
+
+  table caption {
+    font-size: 1.35rem;
+  }
+
+  tbody tr:nth-of-type(even) {
+    background-color: var(--cl-grey);
+  }
+
+  tbody tr:last-of-type {
+    border-bottom: 2px solid var(--cl-dark-green);
+  }
+}
+
+/*
+* === Home Page ===
+*/
+@media only screen and (min-width: 600px) {
+  .grid-container--expense-showcase {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+}
+
+@media only screen and (min-width: 1240px) {
+  .grid-container--expense-showcase {
+    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+  }
 }

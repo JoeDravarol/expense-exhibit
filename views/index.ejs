@@ -18,6 +18,67 @@
 
     <a id="auth-link" href="/dashboard">Sign Up</a>
   </nav>
+
+  <main>
+    <ul class="grid-container--expense-showcase grid-container">
+      <!-- Mobile Table -->
+      <% for(let i=0; i < allUser.length; i++) {%> 
+        <% if (allUser[i].expenses.length> 1) {%>
+        <li id="mobile-table" class="container container--rounded-corner">
+          <header>
+            <h3><%= allUser[i].username %>'s Expenses</h3>
+          </header>
+
+          <div class="expenses-container">
+            <% for(let j=0; j < allUser[i].expenses.length; j++) {%>
+            <table id="mobile-table">
+              <% for(let key in allUser[i].expenses[j]) {%>
+              <tr>
+                <th><%= key %></th>
+                <td><%= allUser[i].expenses[j][key] %></td>
+              </tr>
+              <% } %>
+            </table>
+            <% } %>
+          </div>
+        </li>
+      <% }} %>
+
+      <!-- Desktop Table -->
+      <% for(let i=0; i < allUser.length; i++) {%>
+        <% if (allUser[i].expenses.length >= 1) {%>
+        <li id="desktop-table" class="expenses-container container container--rounded-corner">
+          <table>
+            <caption>
+              <%= allUser[i].username %>'s Expenses
+            </caption>
+            <thead>
+              <tr>
+              <% for(let j=0; j < allUser[i].expenses.length; j++) {%>
+                <% if (j == 0) {%>
+                  <% for(let key in allUser[i].expenses[j]) {%>
+                    <th>
+                      <%= key %>
+                    </th>
+                <% }}} %>
+              </tr>
+            </thead>
+            <tbody>
+              <% for(let j=0; j < allUser[i].expenses.length; j++) {%>
+              <tr>
+                <% for(let key in allUser[i].expenses[j]) {%>
+                  <td>
+                    <%= allUser[i].expenses[j][key] %>
+                  </td>
+                <% } %>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </li>
+      <% }} %>
+    </ul>
+  </main>
 </body>
 
 </html>
