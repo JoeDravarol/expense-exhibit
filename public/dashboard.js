@@ -33,7 +33,7 @@ const mobileTableComponent = user => {
 
     for (let expense of user.expenses) {
       markup += `
-        <table data-expenseId="${expense.id}">
+        <table data-expenseid="${expense.id}">
           ${tableRow(expense)}
           <tr>
             <th>Action</th>
@@ -84,14 +84,14 @@ const desktopTableComponent = user => {
   }
 
   const trMarkup = () => {
-    let i = 0;
-    const expenses = user.expenses;
-    let markup = `<tr data-expenseId="${expenses[i].id}">`;
-  
-    for (; i < expenses.length; i++) {
-      for (let key in expenses[i]) {
+    let markup = ``;
+
+    user.expenses.forEach(expense => {
+      markup += `<tr data-expenseid="${expense.id}">`
+
+      for (let key in expense) {
         if (key !== 'id') {
-          markup += `<td>${expenses[i][key]}</td>`
+          markup += `<td>${expense[key]}</td>`
         }
       }
 
@@ -108,8 +108,8 @@ const desktopTableComponent = user => {
 
       // Close tr
       markup += `</tr>`
-    }
-
+    })
+  
     return markup;
   }
 
@@ -168,7 +168,7 @@ const renderPage = async () => {
   }
 }
 
-// Event Handler
+// Helper Function
 async function createUser(e) {
   e.preventDefault();
   
@@ -191,6 +191,51 @@ async function createUser(e) {
   }
 }
 
+function getExpenseId(target) {
+  return target.closest('[data-expenseid]').dataset.expenseid;
+}
+
+function deleteExpense(e) {
+  const confirmDeletion = confirm(`Do you want to delete this expense?`);
+  const expenseId = getExpenseId(e.target);
+  const user = JSON.parse(localStorage.getItem('user'));
+  
+  console.log(expenseId);
+  if (confirmDeletion) {
+    fetch(`http://localhost:3000/user/${user.uid}/expenses/${expenseId}`, {
+      method: 'DELETE',
+    })
+      .then(() => {
+        // Refresh page
+        location.replace('/dashboard')
+      })
+      .catch(error => console.error(error));
+  }
+}
+
+// Event Handler
+const handleButtonClick = (e) => {
+  const { action } = e.target.dataset;
+  
+  if (action) {
+    let expenseId = getExpenseId(e.target);
+   
+    switch (action) {
+      case 'delete':
+        deleteExpense(expenseId)
+        break;
+    }
+  }
+}
+
 renderPage()
-const signUpForm = document.querySelector('form#sign-up');
-signUpForm.addEventListener('submit', createUser);
+  .then(() => {
+    // const signUpForm = document.querySelector('form#sign-up');
+    const allButton = document.querySelectorAll('button');
+
+    // signUpForm.addEventListener('submit', createUser);
+    allButton.forEach(button => {
+      button.addEventListener('click', deleteExpense)
+    })
+
+  })

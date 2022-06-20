@@ -102,6 +102,19 @@ app.post('/expenses/:uid', async (req, res) => {
   }
 })
 
+app.delete('/user/:uid/expenses/:id', async (req, res) => {
+  try {
+    const expenseIdToDelete = ObjectId(req.params.id);
+    const result = await db.collection('user').updateOne(
+      { uid: req.params.uid },
+      { $pull: { expenses: { id: expenseIdToDelete }}}
+    );
+    res.status(302).render('dashboard.ejs')
+  } catch(err) {
+    console.error(`Error: ${err}`)
+  }
+}) 
+
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}`)
 })
