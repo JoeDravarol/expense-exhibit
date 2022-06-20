@@ -179,6 +179,80 @@ const createExpenseComponent = () => {
   return markup;
 }
 
+const createPieChartComponent = (categoryPercentage) => {
+  const markup = `
+    <section class="graph grid-container grid-container--graph container">
+      <h3>Breakdown by Category</h3>
+      <div class="pie-chart"></div>
+      <ul class="category">
+        <li>
+          <span class="color color--red"></span>
+          Home
+          <span class="percentage" data-category="home">
+            ${categoryPercentage.home || 0}%
+          </span>
+        </li>
+        <li>
+          <span class="color color--blue"></span>
+          Transportation
+          <span class="percentage" data-category="transportation">
+            ${categoryPercentage.transportation || 0}%
+          </span>
+        </li>
+        <li>
+          <span class="color color--green"></span>
+          Entertainment
+          <span class="percentage" data-category="entertainment">
+            ${categoryPercentage.entertainment || 0}%
+          </span>
+        </li>
+        <li>
+          <span class="color color--yellow"></span>
+          Food
+          <span class="percentage" data-category="food">
+            ${categoryPercentage.food || 0}%
+          </span>
+        </li>
+        <li>
+          <span class="color color--indigo"></span>
+          Other
+          <span class="percentage" data-category="other">
+            ${categoryPercentage.other || 0}%
+          </span>
+        </li>
+      </ul>
+    </section>
+  `
+
+  return markup;
+}
+
+const updatePieChartGraph = (categoryPercentage) => {
+  const pieChart = document.querySelector('.pie-chart');
+  const colors = {
+    home: "#d9534f",
+    transportation: "#4582ec",
+    entertainment: "#02b875",
+    food: "#f0d74e",
+    other: "#8c4df2",
+  }
+  let startPercentage = 0;
+
+  let colorString = ``
+
+  Object.entries(categoryPercentage).forEach(([key, value], idx, arr) => {
+    const percentage = value + startPercentage;
+
+    colorString += `${colors[key]} ${startPercentage}% ${percentage}%,`
+    startPercentage = percentage;
+
+    // Remove comma from last color
+    if (idx === arr.length) colorString = colorString.slice(0, -1);
+  })
+  
+  pieChart.style.background = `conic-gradient(#8c4df2 0% 33%,#d9534f 33% 50%,#4582ec 50% 67%,#f0d74e 67% 84%,#02b875 84% 101%)`
+}
+
 const renderPage = async () => {
   const mainContainer = document.querySelector('main.dashboard');
 
@@ -190,11 +264,16 @@ const renderPage = async () => {
   } else {
     const response = await fetch(`/user/${user.uid}`);
     user = await response.json();
-  
+
+    const categoryPercentage = calculateCategoryPercentage(user.expenses);
+
     if (user.expenses.length > 0) {
       mainContainer.insertAdjacentHTML('beforeend', createExpenseComponent());
+      mainContainer.insertAdjacentHTML('beforeend', createPieChartComponent(categoryPercentage));
       mainContainer.insertAdjacentHTML('beforeend', expenseTableComponent(user));
     }
+
+    updatePieChartGraph(categoryPercentage);
   }
 
   return user;
@@ -246,6 +325,29 @@ function deleteExpense(expenseId) {
 
 function redirectToEditExpense(expenseId, uid) {
   return location.replace(`/dashboard/expenses/${expenseId}/${uid}`)
+}
+
+function calculateCategoryPercentage(expenses) {
+  let category = {}
+  let totalCategory = 0;
+
+  // Extract all categories
+  for (let expense of expenses) {
+    if ( !(expense.category in category) ) {
+      category[expense.category] = 0;
+    }
+
+    category[expense.category] += 1;
+    totalCategory += 1;
+  }
+
+  // Work out percentages
+  // Formula: num / total * 100
+  for (let key in category) {
+    category[key] = Math.round(category[key] / totalCategory * 100);
+  }
+
+  return category;
 }
 
 // Event Handler

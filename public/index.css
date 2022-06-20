@@ -3,6 +3,11 @@
   --cl-dark-green: #009879;
   --cl-grey: #d2d0d0;
   --cl-light-grey: #999;
+  --cl-red: #d9534f;
+  --cl-green: #02b875;
+  --cl-blue: #4582ec;
+  --cl-yellow: #f0d74e;
+  --cl-indigo: #8c4df2;
   --gap: 1em;
 }
 
@@ -93,11 +98,11 @@ i {
 * === General ===
 */
 main {
-  padding-inline: 1em;
+  padding-inline: .5em;
   padding-bottom: 3.5em;
 }
 
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 750px) {
   main {
     padding-inline: clamp(2em, 2vw + 1em, 10em);
   }
@@ -214,9 +219,122 @@ td {
 }
 
 /*
+* — Pie Chart —
+*/
+.grid-container--graph {
+  place-items: center;
+  text-transform: capitalize;
+  width: 310px;
+  margin: 0 auto;
+}
+
+.graph h3 {
+  text-align: center;
+}
+
+.pie-chart {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #9ad0f5;
+  /* background: conic-gradient(
+    var(--cl-red) 0 20%,
+    var(--cl-blue) 20% 40%,
+    var(--cl-green) 40% 60%,
+    var(--cl-yellow) 60% 80%,
+    var(--cl-indigo) 80% 100%
+  ); */
+  position: relative;
+}
+
+.pie-chart::after {
+  content: '';
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: white;
+  
+  position: absolute;
+  transform: scale(-0.5);
+}
+
+.category li {
+  margin-bottom: 0.5em;
+}
+
+.color {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin-right: 0.25em;
+}
+
+.color--red {
+  background: var(--cl-red);
+  background: red;
+}
+
+.color--blue {
+  background: var(--cl-blue);
+}
+
+.color--green {
+  background: var(--cl-green);
+}
+
+.color--yellow {
+  background: var(--cl-yellow);
+}
+
+.color--indigo {
+  background: var(--cl-indigo);
+}
+
+
+/*
 * === Dashboard Page ===
 */
 .expenses-container--dashboard {
   max-height: fit-content;
   overflow-y: initial;
 }
+
+@media only screen and (min-width: 600px) {
+  .grid-container--dashboard {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+      "form graph"
+      "table table"
+    ;
+    gap: 2em 1em;
+  }
+  
+  .grid-container--dashboard form {
+    grid-area: form;
+    width: 100%;
+    min-width: 100%;
+  }
+  
+  .graph {
+    grid-area: graph;
+    width: 100%;
+    min-width: 100%;
+  }
+  
+  .expense-table {
+    grid-area: table;
+  }
+}
+
+@media only screen and (min-width: 1240px) {
+  .grid-container--dashboard {
+    grid-template-columns: max(1em, 10vw) 2fr 1fr max(1em, 10vw);
+    grid-template-areas: 
+      ". form graph ."
+      ". table table ."
+    ;
+    gap: 2em 1em;
+  }
+}
+
