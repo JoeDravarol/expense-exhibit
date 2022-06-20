@@ -325,6 +325,11 @@ td {
   .expense-table {
     grid-area: table;
   }
+
+  .grid-container--dashboard .sign-up {
+    grid-column: span 2;
+    min-width: fit-content;
+  }
 }
 
 @media only screen and (min-width: 1240px) {
@@ -335,6 +340,11 @@ td {
       ". table table ."
     ;
     gap: 2em 1em;
+  }
+
+  .grid-container--dashboard .sign-up {
+    grid-column: 2/4;
+    min-width: fit-content;
   }
 }
 

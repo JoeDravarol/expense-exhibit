@@ -253,32 +253,6 @@ const updatePieChartGraph = (categoryPercentage) => {
   pieChart.style.background = `conic-gradient(#8c4df2 0% 33%,#d9534f 33% 50%,#4582ec 50% 67%,#f0d74e 67% 84%,#02b875 84% 101%)`
 }
 
-const renderPage = async () => {
-  const mainContainer = document.querySelector('main.dashboard');
-
-  // Display signup form when not signed in
-  if (!user) {
-    mainContainer.insertAdjacentHTML('beforeend', signUpComponent());
-
-    // Display user's UI
-  } else {
-    const response = await fetch(`/user/${user.uid}`);
-    user = await response.json();
-
-    const categoryPercentage = calculateCategoryPercentage(user.expenses);
-
-    if (user.expenses.length > 0) {
-      mainContainer.insertAdjacentHTML('beforeend', createExpenseComponent());
-      mainContainer.insertAdjacentHTML('beforeend', createPieChartComponent(categoryPercentage));
-      mainContainer.insertAdjacentHTML('beforeend', expenseTableComponent(user));
-    }
-
-    updatePieChartGraph(categoryPercentage);
-  }
-
-  return user;
-}
-
 // Helper Function
 async function createUser(e) {
   e.preventDefault();
@@ -388,19 +362,45 @@ const handleCreateExpense = (e) => {
     })
 }
 
+const renderPage = async () => {
+  const mainContainer = document.querySelector('main.dashboard');
 
+  // Display signup form when not signed in
+  if (!user) {
+    mainContainer.insertAdjacentHTML('beforeend', signUpComponent());
+
+    // Display user's UI
+  } else {
+    const response = await fetch(`/user/${user.uid}`);
+    user = await response.json();
+
+    const categoryPercentage = calculateCategoryPercentage(user.expenses);
+
+    mainContainer.insertAdjacentHTML('beforeend', createExpenseComponent());
+    mainContainer.insertAdjacentHTML('beforeend', createPieChartComponent(categoryPercentage));
+
+    if (user.expenses.length > 0) {
+      mainContainer.insertAdjacentHTML('beforeend', expenseTableComponent(user));
+    }
+
+    updatePieChartGraph(categoryPercentage);
+  }
+
+  return user;
+}
 
 renderPage()
-  .then(() => {
-    // const signUpForm = document.querySelector('form#sign-up');
+  .then(user => {
+    if (!user) {
+      const signUpForm = document.querySelector('form#sign-up');
+      signUpForm.addEventListener('submit', createUser);
+    }
     const allButton = document.querySelectorAll('button');
+    const createForm = document.querySelector('.create-expense');
 
-    // signUpForm.addEventListener('submit', createUser);
     allButton.forEach(button => {
       button.addEventListener('click', handleButtonClick)
     })
-
-    const createForm = document.querySelector('.create-expense');
 
     createForm.addEventListener('submit', handleCreateExpense);
   })
