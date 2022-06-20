@@ -30,6 +30,7 @@ app.get('/dashboard', (req, res) => {
   res.render('dashboard.ejs')
 })
 
+// User routes
 app.get('/user/:uid', async (req, res) => {
   try {
     const user = await db.collection('user').findOne({ uid: req.params.uid });
@@ -68,6 +69,7 @@ app.post('/user', async (req, res) => {
   }
 })
 
+// Expense Routes
 // Get all user's expenses
 app.get('/', async (req, res) => {
   try {
@@ -78,6 +80,19 @@ app.get('/', async (req, res) => {
     res.render('index.ejs', { allUser: newAllUser })
   } catch(err) {
     console.error(`Error: ${err}`)
+  }
+})
+
+// Get a single expense
+app.get('/dashboard/expenses/:id/:uid', async (req, res) => {
+  try {
+    const user = await db.collection('user').findOne({ uid: req.params.uid });
+    const expense = user.expenses.find(a => a.id == req.params.id)
+
+    res.render('editExpense.ejs', { expense })
+  } catch(err) {
+    console.error(`Error: ${err}`)
+    res.redirect('/dashboard')
   }
 })
 
@@ -101,6 +116,22 @@ app.post('/expenses/:uid', async (req, res) => {
     console.error(`Error: ${err}`)
   }
 })
+
+app.put('/user/:uid/expenses/:id', async (req, res) => {
+  const expenseIdToUpdate = ObjectId(req.params.id)
+  const { title, date, category, amount} = req.body;
+
+  try {
+    const result = await db.collection('user').updateOne(
+      { uid: req.params.uid, expenses: { $elemMatch: { id: expenseIdToUpdate }} },
+      { $set: { "expenses.$.title": title, "expenses.$.date": date, "expenses.$.category": category, "expenses.$.amount": amount }}
+    )
+
+    res.status(201).redirect('/dashboard')
+  } catch(err) {
+    console.error(`Error: ${err}`)
+  }
+}) 
 
 app.delete('/user/:uid/expenses/:id', async (req, res) => {
   try {

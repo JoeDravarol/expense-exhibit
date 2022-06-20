@@ -195,14 +195,13 @@ function getExpenseId(target) {
   return target.closest('[data-expenseid]').dataset.expenseid;
 }
 
-function deleteExpense(e) {
+function deleteExpense(expenseId) {
   const confirmDeletion = confirm(`Do you want to delete this expense?`);
-  const expenseId = getExpenseId(e.target);
   const user = JSON.parse(localStorage.getItem('user'));
   
   console.log(expenseId);
   if (confirmDeletion) {
-    fetch(`http://localhost:3000/user/${user.uid}/expenses/${expenseId}`, {
+    fetch(`/user/${user.uid}/expenses/${expenseId}`, {
       method: 'DELETE',
     })
       .then(() => {
@@ -213,14 +212,21 @@ function deleteExpense(e) {
   }
 }
 
+function redirectToEditExpense(expenseId, uid) {
+  return location.replace(`/dashboard/expenses/${expenseId}/${uid}`)
+}
+
 // Event Handler
 const handleButtonClick = (e) => {
   const { action } = e.target.dataset;
-  
+
   if (action) {
     let expenseId = getExpenseId(e.target);
    
     switch (action) {
+      case 'edit':
+        redirectToEditExpense(expenseId, user.uid)
+        break;
       case 'delete':
         deleteExpense(expenseId)
         break;
@@ -235,7 +241,7 @@ renderPage()
 
     // signUpForm.addEventListener('submit', createUser);
     allButton.forEach(button => {
-      button.addEventListener('click', deleteExpense)
+      button.addEventListener('click', handleButtonClick)
     })
 
   })
