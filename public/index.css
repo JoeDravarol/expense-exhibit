@@ -157,6 +157,7 @@ table caption {
 th {
   background-color: var(--cl-dark-green);
   color: #fff;
+  width: 20%;
 }
 
 tbody tr {
