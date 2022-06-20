@@ -150,6 +150,35 @@ const expenseTableComponent = user => {
   return markup;
 }
 
+const createExpenseComponent = () => {
+  const markup = `
+    <form class="create-expense flow flex">
+
+      <label for="title">Title:</label>
+      <input id="title" type="text" placeholder="Expense Title" required min="4" />
+
+      <label for="date">Date:</label>
+      <input id="date" type="date" required />
+
+      <label for="category-select">Category: </label>
+      <select name="category" id="category-select" required>
+        <option value="home">Home</option>
+        <option value="transportation">Transportation</option>
+        <option value="entertainment">Entertainment</option>
+        <option value="food">Food</option>
+        <option value="other">Other</option>
+      </select>
+
+      <label for="amount">Amount:</label>
+      <input id="amount" type="number" required />
+
+      <button>Create Expense</button>
+    </form>
+  `
+
+  return markup;
+}
+
 const renderPage = async () => {
   const mainContainer = document.querySelector('main.dashboard');
 
@@ -163,9 +192,12 @@ const renderPage = async () => {
     user = await response.json();
   
     if (user.expenses.length > 0) {
+      mainContainer.insertAdjacentHTML('beforeend', createExpenseComponent());
       mainContainer.insertAdjacentHTML('beforeend', expenseTableComponent(user));
     }
   }
+
+  return user;
 }
 
 // Helper Function
@@ -234,6 +266,28 @@ const handleButtonClick = (e) => {
   }
 }
 
+const handleCreateExpense = (e) => {
+  e.preventDefault();
+
+  const { title, date, category, amount } = e.target;
+
+  fetch(`/expenses/${user.uid}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      title: title.value,
+      date: date.value,
+      category: category.value,
+      amount: amount.value
+    })
+  })
+    .then(() => {
+      location.replace('/dashboard');
+    })
+}
+
+
+
 renderPage()
   .then(() => {
     // const signUpForm = document.querySelector('form#sign-up');
@@ -244,4 +298,7 @@ renderPage()
       button.addEventListener('click', handleButtonClick)
     })
 
+    const createForm = document.querySelector('.create-expense');
+
+    createForm.addEventListener('submit', handleCreateExpense);
   })
