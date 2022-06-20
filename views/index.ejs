@@ -33,11 +33,12 @@
             <% for(let j=0; j < allUser[i].expenses.length; j++) {%>
             <table>
               <% for(let key in allUser[i].expenses[j]) {%>
-              <tr>
-                <th><%= key %></th>
-                <td><%= allUser[i].expenses[j][key] %></td>
-              </tr>
-              <% } %>
+                <% if (key !== 'id') {%>
+                <tr>
+                  <th><%= key %></th>
+                  <td><%= allUser[i].expenses[j][key] %></td>
+                </tr>
+              <% }} %>
             </table>
             <% } %>
           </div>
@@ -57,20 +58,22 @@
               <% for(let j=0; j < allUser[i].expenses.length; j++) {%>
                 <% if (j == 0) {%>
                   <% for(let key in allUser[i].expenses[j]) {%>
+                    <% if (key !== 'id') {%>
                     <th>
                       <%= key %>
                     </th>
-                <% }}} %>
+                <% }}}} %>
               </tr>
             </thead>
             <tbody>
               <% for(let j=0; j < allUser[i].expenses.length; j++) {%>
               <tr>
                 <% for(let key in allUser[i].expenses[j]) {%>
+                  <% if (key !== 'id') {%>
                   <td>
                     <%= allUser[i].expenses[j][key] %>
                   </td>
-                <% } %>
+                <% }} %>
               </tr>
               <% } %>
             </tbody>

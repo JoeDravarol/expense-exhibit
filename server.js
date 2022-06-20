@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
-const MongoClient = require('mongodb').MongoClient;
+const { MongoClient, ObjectId } = require('mongodb');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,6 +29,16 @@ app.use( express.static('public') );
 app.get('/dashboard', (req, res) => {
   res.render('dashboard.ejs')
 })
+
+app.get('/user/:uid', async (req, res) => {
+  try {
+    const user = await db.collection('user').findOne({ uid: req.params.uid });
+    
+    res.status(302).json(user);
+  } catch(err) {
+    console.error(`Error: ${err}`)
+  }
+});
 
 app.post('/user', async (req, res) => {
   const { username } = req.body;
@@ -73,6 +83,7 @@ app.get('/', async (req, res) => {
 
 app.post('/expenses/:uid', async (req, res) => {
   const newExpense = {
+    id: ObjectId(),
     title: req.body.title,
     date: req.body.date,
     category: req.body.category,
