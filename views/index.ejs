@@ -23,7 +23,7 @@
     <ul class="grid-container--expense-showcase grid-container">
       <!-- Mobile Table -->
       <% for(let i=0; i < allUser.length; i++) {%> 
-        <% if (allUser[i].expenses.length> 1) {%>
+        <% if (allUser[i].expenses.length >= 1) {%>
         <li id="mobile-table" class="container container--rounded-corner">
           <header>
             <h3><%= allUser[i].username %>'s Expenses</h3>
