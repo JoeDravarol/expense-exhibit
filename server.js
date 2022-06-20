@@ -33,7 +33,13 @@ app.get('/dashboard', (req, res) => {
 // User routes
 app.get('/user/:uid', async (req, res) => {
   try {
-    const user = await db.collection('user').findOne({ uid: req.params.uid });
+    let user = await db.collection('user').findOne({ uid: req.params.uid });
+
+    // sort expenses by newest first
+    user = {
+      ...user,
+      expenses: user.expenses.reverse()
+    }
     
     res.status(302).json(user);
   } catch(err) {
@@ -74,8 +80,8 @@ app.post('/user', async (req, res) => {
 app.get('/', async (req, res) => {
   try {
     const allUser = await db.collection('user').find().toArray();
-    // Remove sensitive information
-    const newAllUser = allUser.map(user => ({ username: user.username, expenses: user.expenses }))
+    // Remove sensitive information && sort expenses by newest first
+    const newAllUser = allUser.map(user => ({ username: user.username, expenses: user.expenses.reverse() }))
     
     res.render('index.ejs', { allUser: newAllUser })
   } catch(err) {
