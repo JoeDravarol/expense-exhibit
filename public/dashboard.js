@@ -247,10 +247,10 @@ const updatePieChartGraph = (categoryPercentage) => {
     startPercentage = percentage;
 
     // Remove comma from last color
-    if (idx === arr.length) colorString = colorString.slice(0, -1);
+    if (idx + 1 === arr.length) colorString = colorString.slice(0, -1);
   })
-  
-  pieChart.style.background = `conic-gradient(#8c4df2 0% 33%,#d9534f 33% 50%,#4582ec 50% 67%,#f0d74e 67% 84%,#02b875 84% 101%)`
+
+  pieChart.style.background = `conic-gradient(${colorString})`
 }
 
 // Helper Function
